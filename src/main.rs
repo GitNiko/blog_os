@@ -29,6 +29,10 @@ fn panic(_info: &PanicInfo) -> ! {
 pub extern "C" fn _start() -> ! {
     print!("some numbers: {} {}", 29, 3.1415926);
 
+    blog_os::init();
+
+    x86_64::instructions::interrupts::int3();
+
     #[cfg(test)]
     test_main();
 
