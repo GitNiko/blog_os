@@ -3,6 +3,11 @@ name = "blog_os"
 version = "0.1.0"
 edition = "2021"
 
+[[test]]
+name = "stack_overflow"
+harness = false
+
+
 [profile.dev]
 panic = "abort"
 
