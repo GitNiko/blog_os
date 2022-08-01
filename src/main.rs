@@ -15,14 +15,14 @@ use blog_os::{println, print};
 #[panic_handler]
 fn panic(_info: &PanicInfo) -> ! {
     println!("{}", _info);
-    loop {}
+    blog_os::hlt_loop();
 }
 
 #[cfg(test)]
 #[panic_handler]
 fn panic(_info: &PanicInfo) -> ! {
     blog_os::test_panic_handler(_info);
-    loop {}
+    blog_os::hlt_loop();
 }
 
 #[no_mangle]
@@ -36,5 +36,5 @@ pub extern "C" fn _start() -> ! {
     #[cfg(test)]
     test_main();
 
-    loop {}
+    blog_os::hlt_loop();
 }
