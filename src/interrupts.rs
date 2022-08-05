@@ -13,6 +13,7 @@ lazy_static! {
         }
         idt[InterruptIndex::Timer.as_usize()].set_handler_fn(timer_interrupt_handler);
         idt[InterruptIndex::Keyboard.as_usize()].set_handler_fn(keyboard_interrupt_handler);
+        idt.page_fault.set_handler_fn(page_fault_handler);
         idt
     };
 }
@@ -65,7 +66,6 @@ impl InterruptIndex {
 }
 /// timer
 extern "x86-interrupt" fn timer_interrupt_handler(stack_frame: InterruptStackFrame) {
-    println!(".");
     unsafe {
         PICS.lock()
             .notify_end_of_interrupt(InterruptIndex::Timer.as_u8());
@@ -101,4 +101,16 @@ extern "x86-interrupt" fn keyboard_interrupt_handler(_stack_frame: InterruptStac
         PICS.lock()
             .notify_end_of_interrupt(InterruptIndex::Keyboard.as_u8());
     }
+}
+
+use x86_64::structures::idt::PageFaultErrorCode;
+
+extern "x86-interrupt" fn page_fault_handler(stack_frame: InterruptStackFrame, _error_code: PageFaultErrorCode) {
+    use crate::hlt_loop;
+    use x86_64::registers::control::Cr2;
+
+    println!("Exception: Page Fault");
+    println!("Accessed Address: {:?}", Cr2::read());
+    println!("{:#?}", stack_frame);
+    hlt_loop();
 }
